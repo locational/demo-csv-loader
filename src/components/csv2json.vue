@@ -16,12 +16,12 @@
       <table v-if="required_field" style="margin-left:30%; margin-top:10px;">
         <tr>
           <th>Required fields</th>
-          <th>Select fields</th>
+          <th>Fields present in uploaded file</th>
         </tr>
         <tr v-for="(field, i) in required_field" :key="i">
           <td ref="data">{{field.field}}</td>
           <td>
-            <select v-model="field.value" >
+            <select v-model="field.value">
               <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
             </select>
           </td>
@@ -34,18 +34,17 @@
       <pre v-if="response.data">
           {{response.data[0]}}
       </pre>
-      
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import download from 'downloadjs'
+import download from "downloadjs";
 import {
   load_data_from_file,
   read_file_content,
-  parse_raw_data,
+  parse_raw_data
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
@@ -74,7 +73,6 @@ export default Vue.extend({
   },
 
   methods: {
-    
     async select_file(file: File) {
       this.file_name = file.target.files[0].name;
       this.file_selected = !this.file_selected;
@@ -111,7 +109,7 @@ export default Vue.extend({
           this.file_name
         );
       }
-    },
+    }
   }
 });
 </script>

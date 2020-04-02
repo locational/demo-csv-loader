@@ -1,10 +1,6 @@
 import { Result } from '../lib/types';
 import Papa, { ParseConfig } from 'papaparse'
 
-function hasKey<O>(obj: O, key: keyof any,): key is keyof O {
-    return key in obj
-}
-
 
 export function read_file_content(file: File): Promise<string> {
 
@@ -29,12 +25,8 @@ export function read_file_content(file: File): Promise<string> {
 //All about validation the csv
 
 export function parse_raw_data(filename: string, raw_data: any): Result {
-
-
     let data: any;
-
     let errors: [];
-
     const ext = filename.split('.').slice(-1)[0] || '';
     const config: ParseConfig = {
          header: true,
