@@ -9,6 +9,7 @@
     </div>
     <div class="data-field-mapper" v-if="file_selected">
       <h3>Data field mapper</h3>
+      <h4>Select algorithm</h4>
       <select v-model="selected_algo" @change="select_algo">
         <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">{{algo.fn_name}}</option>
       </select>
@@ -20,31 +21,31 @@
         <tr v-for="(field, i) in required_field" :key="i">
           <td ref="data">{{field.field}}</td>
           <td>
-            <select v-model="field.value" @input="select_field_name">
+            <select v-model="field.value" >
               <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
             </select>
           </td>
         </tr>
       </table>
-      <button @click="change_keys">submit</button>
+      <button v-if="selected_algo" @click="change_keys">submit</button>
     </div>
     <div class="json-preview" v-if="json_preview && response">
       <h3>Data as json</h3>
       <pre v-if="response.data">
-          {{response.data}}
+          {{response.data[0]}}
       </pre>
+      
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import lodash from "lodash";
+import download from 'downloadjs'
 import {
   load_data_from_file,
   read_file_content,
   parse_raw_data,
-  change_key
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
@@ -57,15 +58,13 @@ export default Vue.extend({
       load_error_messages: null as null | string[],
       raw_csv: null as null | string,
       file_selected: false,
-      valid_csv_loaded: false,
       response: null as null | Result,
       json_preview: false,
       algos: algos,
       selected_algo: "",
       algo_fields: null as null | undefined | AlgoField[],
-      selected_field_name: "",
       required_field: null as null | RequiredField[],
-      file_name:null as null | string
+      file_name: null as null | string
     };
   },
   computed: {
@@ -75,13 +74,9 @@ export default Vue.extend({
   },
 
   methods: {
-    select_field_name(e: any) {
-      console.log(this.required_field);
-    },
+    
     async select_file(file: File) {
-     
       this.file_name = file.target.files[0].name;
-      console.log(this.file_name);
       this.file_selected = !this.file_selected;
       this.response = await load_data_from_file(file);
       this.raw_csv = await read_file_content(file);
@@ -102,23 +97,21 @@ export default Vue.extend({
       this.required_field?.forEach((el: any) => {
         if (el.value !== "" && el.value !== null && el.field) {
           const st = this.raw_csv?.replace(el.value, el.field);
-
           if (st) {
             this.raw_csv = st;
           }
         }
       });
 
-      if(this.file_name){
-
+      if (this.file_name) {
         this.response = await parse_raw_data(this.file_name, this.raw_csv);
+        this.$emit(
+          "set_incoming_geodata_and_filename",
+          this.response.data,
+          this.file_name
+        );
       }
-     
     },
-
-    submit_fields() {
-      console.log("Yeah");
-    }
   }
 });
 </script>
