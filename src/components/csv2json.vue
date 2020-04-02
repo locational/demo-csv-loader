@@ -43,17 +43,19 @@ import lodash from "lodash";
 import {
   load_data_from_file,
   read_file_content,
+  parse_raw_data,
   change_key
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
-import Papa from 'papaparse';
+import Papa from "papaparse";
 
 export default Vue.extend({
   name: "csv2json",
   data() {
     return {
       load_error_messages: null as null | string[],
+      raw_csv: null as null | string,
       file_selected: false,
       valid_csv_loaded: false,
       response: null as null | Result,
@@ -62,7 +64,8 @@ export default Vue.extend({
       selected_algo: "",
       algo_fields: null as null | undefined | AlgoField[],
       selected_field_name: "",
-      required_field: null as null | RequiredField[]
+      required_field: null as null | RequiredField[],
+      file_name:null as null | string
     };
   },
   computed: {
@@ -76,23 +79,14 @@ export default Vue.extend({
       console.log(this.required_field);
     },
     async select_file(file: File) {
+     
+      this.file_name = file.target.files[0].name;
+      console.log(this.file_name);
       this.file_selected = !this.file_selected;
-      const result = await load_data_from_file(file);
-
-      if (result.valid_csv) {
-        this.valid_csv_loaded = result.valid_csv;
-        this.response = result;
-    
-        this.load_error_messages = null; // Might want to reset a previous load attempt
-        this.$emit("set_incoming_geodata_and_filename", result.data, file.name);
-      } else {
-        this.valid_csv_loaded = result.valid_csv;
-        this.load_error_messages = result.load_error_messages;
-        this.$emit("set_incoming_geodata_and_filename", null, null);
-      }
+      this.response = await load_data_from_file(file);
+      this.raw_csv = await read_file_content(file);
     },
     select_algo() {
-      console.log(this.selected_algo);
       for (let i = 0; i <= this.algos.length - 1; i++) {
         if (this.algos[i].fn_name === this.selected_algo) {
           this.algo_fields = this.algos[i].fields;
@@ -102,24 +96,28 @@ export default Vue.extend({
       this.algo_fields?.forEach((element: AlgoField) => {
         this.required_field?.push({ field: element.field_name, value: "" });
       });
-
-      console.log(this.required_field);
     },
-    change_keys() {
+    async change_keys() {
       this.json_preview = !this.json_preview;
-      let data:any;
-     this.required_field?.map(el => {
+      this.required_field?.forEach((el: any) => {
         if (el.value !== "" && el.value !== null && el.field) {
-          data = change_key(el.field, el.value, this.response?.data);
-         
+          const st = this.raw_csv?.replace(el.value, el.field);
+
+          if (st) {
+            this.raw_csv = st;
+          }
         }
-        
       });
-     console.log(data)
+
+      if(this.file_name){
+
+        this.response = await parse_raw_data(this.file_name, this.raw_csv);
+      }
+     
     },
 
     submit_fields() {
-      console.log("Empty");
+      console.log("Yeah");
     }
   }
 });

@@ -11,7 +11,7 @@ export function change_key(key:string,old_key:string,data:null|undefined|JSON[])
     if(key && data){
        const newAarray = data.map((el:JSON)=>{
           
-            console.log(old_key,hasKey(el,old_key))
+          
             if(hasKey(el,old_key)){
                const obj = {[key]:el[old_key]}
                
@@ -55,7 +55,7 @@ export function read_file_content(file: File): Promise<string> {
 
 //All about validation the csv
 
-function parse_raw_data(filename: string, raw_data: any): Result {
+export function parse_raw_data(filename: string, raw_data: any): Result {
 
 
     let data: any;
@@ -119,7 +119,7 @@ function parse_raw_data(filename: string, raw_data: any): Result {
 
 
 async function load_data_from_file(file: File): Promise<Result> {
-    console.log(file);
+   
     try {
         const file_content = await read_file_content(file);
         return parse_raw_data(file.target.files[0].name,file_content)
