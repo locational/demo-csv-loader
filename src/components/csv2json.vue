@@ -32,7 +32,7 @@
     <div class="json-preview" v-if="json_preview && response">
       <h3>Data as json</h3>
       <pre v-if="response.data">
-          {{response.data[0]}}
+          {{response.data}}
       </pre>
     </div>
   </div>
@@ -73,7 +73,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async select_file(file: File) {
+    async select_file(file : File) {
       this.file_name = file.target.files[0].name;
       this.file_selected = !this.file_selected;
       this.response = await load_data_from_file(file);
