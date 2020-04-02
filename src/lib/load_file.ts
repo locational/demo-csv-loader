@@ -6,33 +6,6 @@ function hasKey<O>(obj: O, key: keyof any,): key is keyof O {
 }
 
 
-export function change_key(key:string,old_key:string,data:null|undefined|JSON[]){
-  
-    if(key && data){
-       const newAarray = data.map((el:JSON)=>{
-          
-          
-            if(hasKey(el,old_key)){
-               const obj = {[key]:el[old_key]}
-               
-               const spread_obj = {
-                   ...el,
-                   ...obj
-               }
-
-               delete spread_obj[old_key]
-               console.log(spread_obj)
-               return spread_obj;
-            }
-
-
-        })
-
-        return newAarray;
-    }
-
-}
-
 export function read_file_content(file: File): Promise<string> {
 
     return new Promise((resolve, reject) => {
