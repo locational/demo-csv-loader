@@ -7,6 +7,20 @@
         <span v-for="(i, err) in load_error_messages" :key="i">h,{{err}}</span>
       </div>
     </div>
+    <div class="data-field-mapper">
+        <h3>Data field mapper</h3>
+        <table>
+            <tr>
+              <th>Required fields</th>
+              <th>Select fields</th>
+            </tr>
+            <tr>
+              <td>id</td>
+              <td>Yeah</td>
+            </tr>
+        </table>
+  
+    </div>
     <div class="json-preview" v-if="data">
       <h3>Data as json</h3>
       <pre>
@@ -32,7 +46,7 @@ export default Vue.extend({
   methods: {
     async select_file(file: File) {
       const result = await load_data_from_file(file);
-      JSON.stringify(result.data,undefined,4)
+    
       if (result.valid_csv) {
         this.valid_csv_loaded = result.valid_csv;
         this.data = result.data;
@@ -43,6 +57,10 @@ export default Vue.extend({
         this.load_error_messages = result.load_error_messages;
         this.$emit("set_incoming_geodata_and_filename", null, null);
       }
+    },
+
+    submit_fields(){
+      console.log("Empty");
     }
   }
 });
@@ -59,6 +77,17 @@ export default Vue.extend({
   border-radius: 2px;
   padding: 10px;
   margin-top: 10px;
+}
+
+.data-field-mapper{
+   border: 1px solid;
+  border-radius: 2px;
+  padding: 10px;
+  margin-top: 10px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
 }
 
 .wrapper{
