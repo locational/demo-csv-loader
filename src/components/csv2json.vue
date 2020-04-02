@@ -7,24 +7,31 @@
         <span v-for="(i, err) in load_error_messages" :key="i">h,{{err}}</span>
       </div>
     </div>
-    <div class="data-field-mapper">
-        <h3>Data field mapper</h3>
-        <table>
-            <tr>
-              <th>Required fields</th>
-              <th>Select fields</th>
-            </tr>
-            <tr>
-              <td>id</td>
-              <td>Yeah</td>
-            </tr>
-        </table>
-  
+    <div class="data-field-mapper" v-if="file_selected">
+      <h3>Data field mapper</h3>
+      <select v-model="selected_algo" @change="select_algo">
+        <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">{{algo.fn_name}}</option>
+      </select>
+      <table v-if="required_field" style="margin-left:30%; margin-top:10px;">
+        <tr>
+          <th>Required fields</th>
+          <th>Select fields</th>
+        </tr>
+        <tr v-for="(field, i) in required_field" :key="i">
+          <td ref="data">{{field.field}}</td>
+          <td>
+            <select v-model="field.value" @input="select_field_name">
+              <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <button @click="change_keys">submit</button>
     </div>
-    <div class="json-preview" v-if="data">
+    <div class="json-preview" v-if="json_preview && response">
       <h3>Data as json</h3>
-      <pre>
-          {{data[0]}}
+      <pre v-if="response.data">
+          {{response.data}}
       </pre>
     </div>
   </div>
@@ -32,24 +39,50 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { load_data_from_file } from "../lib/load_file";
+import lodash from "lodash";
+import {
+  load_data_from_file,
+  read_file_content,
+  change_key
+} from "../lib/load_file";
+import { algos } from "../lib/algos";
+import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
+import Papa from 'papaparse';
 
 export default Vue.extend({
   name: "csv2json",
   data() {
     return {
       load_error_messages: null as null | string[],
+      file_selected: false,
       valid_csv_loaded: false,
-      data:null as null | JSON
+      response: null as null | Result,
+      json_preview: false,
+      algos: algos,
+      selected_algo: "",
+      algo_fields: null as null | undefined | AlgoField[],
+      selected_field_name: "",
+      required_field: null as null | RequiredField[]
     };
   },
+  computed: {
+    get_file_headers() {
+      return this.$data.response.meta.fields;
+    }
+  },
+
   methods: {
+    select_field_name(e: any) {
+      console.log(this.required_field);
+    },
     async select_file(file: File) {
+      this.file_selected = !this.file_selected;
       const result = await load_data_from_file(file);
-    
+
       if (result.valid_csv) {
         this.valid_csv_loaded = result.valid_csv;
-        this.data = result.data;
+        this.response = result;
+    
         this.load_error_messages = null; // Might want to reset a previous load attempt
         this.$emit("set_incoming_geodata_and_filename", result.data, file.name);
       } else {
@@ -58,8 +91,34 @@ export default Vue.extend({
         this.$emit("set_incoming_geodata_and_filename", null, null);
       }
     },
+    select_algo() {
+      console.log(this.selected_algo);
+      for (let i = 0; i <= this.algos.length - 1; i++) {
+        if (this.algos[i].fn_name === this.selected_algo) {
+          this.algo_fields = this.algos[i].fields;
+        }
+      }
+      this.required_field = [];
+      this.algo_fields?.forEach((element: AlgoField) => {
+        this.required_field?.push({ field: element.field_name, value: "" });
+      });
 
-    submit_fields(){
+      console.log(this.required_field);
+    },
+    change_keys() {
+      this.json_preview = !this.json_preview;
+      let data:any;
+     this.required_field?.map(el => {
+        if (el.value !== "" && el.value !== null && el.field) {
+          data = change_key(el.field, el.value, this.response?.data);
+         
+        }
+        
+      });
+     console.log(data)
+    },
+
+    submit_fields() {
       console.log("Empty");
     }
   }
@@ -72,26 +131,27 @@ export default Vue.extend({
   border-radius: 2px;
   padding: 10px;
 }
-.json-preview{
+.json-preview {
   border: 1px solid;
   border-radius: 2px;
   padding: 10px;
   margin-top: 10px;
 }
 
-.data-field-mapper{
-   border: 1px solid;
+.data-field-mapper {
+  border: 1px solid;
   border-radius: 2px;
   padding: 10px;
   margin-top: 10px;
 }
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
   border-collapse: collapse;
 }
 
-.wrapper{
-   margin-left: 10px;
-  
+.wrapper {
+  margin-left: 10px;
 }
 </style>
