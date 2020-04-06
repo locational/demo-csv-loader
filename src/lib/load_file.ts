@@ -16,7 +16,7 @@ export function read_file_content(file: File): Promise<string> {
             return resolve(read_result);
         });
 
-        reader.readAsBinaryString(file.target.files[0] as Blob);
+        reader.readAsBinaryString(file as Blob);
     });
 }
 
@@ -87,7 +87,7 @@ async function load_data_from_file(file: File): Promise<Result> {
    
     try {
         const file_content = await read_file_content(file);
-        return parse_raw_data(file.target.files[0].name,file_content)
+        return parse_raw_data(file.name,file_content)
     } catch (e) {
         return {
             valid_csv: false,

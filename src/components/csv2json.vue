@@ -74,7 +74,8 @@ export default Vue.extend({
 
   methods: {
     async select_file(file : File) {
-      this.file_name = file.target.files[0].name;
+      
+      this.file_name = file.name;
       this.file_selected = !this.file_selected;
       this.response = await load_data_from_file(file);
       this.raw_csv = await read_file_content(file);
