@@ -49,7 +49,6 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
         data = Papa.parse(raw_data, config);
         errors = data.errors;
     } catch (e) {
-        console.error(e);
         const msg = 'Problem parsing CSV';
         return {
             valid_csv: false,
