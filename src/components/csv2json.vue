@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="load-file">
       <h3>CSV to json coneveter</h3>
-      <input type="file" placeholder="Upload file" @input="select_file" />
+      <input type="file" name="file" placeholder="Upload file" @input="select_file" />
       <div class="errors" v-if="load_error_messages">
         <span v-for="(i, err) in load_error_messages" :key="i">h,{{err}}</span>
       </div>
@@ -73,12 +73,17 @@ export default Vue.extend({
   },
 
   methods: {
-    async select_file(file : File) {
+    async select_file(event: Event) {
       
-      this.file_name = file.name;
-      this.file_selected = !this.file_selected;
-      this.response = await load_data_from_file(file);
-      this.raw_csv = await read_file_content(file);
+      const files = (event.target as HTMLInputElement).files;
+
+      if (files) {
+        this.file_name = files[0].name;
+        this.file_selected = !this.file_selected;
+        this.response = await load_data_from_file(files[0]);
+        this.raw_csv = await read_file_content(files[0]);
+        
+      }
     },
     select_algo() {
       for (let i = 0; i <= this.algos.length - 1; i++) {
