@@ -82,7 +82,6 @@ export default Vue.extend({
         this.file_selected = !this.file_selected;
         this.response = await load_data_from_file(files[0]);
         this.raw_csv = await read_file_content(files[0]);
-        
       }
     },
     select_algo() {

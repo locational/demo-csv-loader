@@ -30,7 +30,7 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
     const ext = filename.split('.').slice(-1)[0] || '';
     const config: ParseConfig = {
          header: true,
-        dynamicTyping: true
+        dynamicTyping: true,
         skipEmptyLines:true
     }
 
@@ -60,7 +60,7 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
         };
     }
 
-
+    
 
     if (errors.length > 0) {
         return {
@@ -77,7 +77,6 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
         load_error_messages: null,
         meta:data.meta,
         raw_data:raw_data,
-        data,
         data:data.data,
         
     };

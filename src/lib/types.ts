@@ -13,7 +13,7 @@ export interface RequiredField{
 export interface Result {
     valid_csv: boolean;
     load_error_messages: null | string[],
-    data:null,
+    data:null|JSON[],
     meta:null,
     raw_data:null|string
 }
