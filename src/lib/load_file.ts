@@ -31,6 +31,7 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
     const config: ParseConfig = {
          header: true,
         dynamicTyping: true
+        skipEmptyLines:true
     }
 
 
