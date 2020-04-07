@@ -1,4 +1,4 @@
-import { Result } from '../lib/types';
+import { Result, RequiredField } from '../lib/types';
 import Papa, { ParseConfig } from 'papaparse'
 
 export function guess_value(field: string, headers: string[]): string {
@@ -11,15 +11,32 @@ export function guess_value(field: string, headers: string[]): string {
         return el.match(field.substr(0, 3))
     })
     const my_headers = headers.map((el) => {
-        return el.match(field.substring(0,3))
+        return el.match(field.substring(0, 3))
     }).filter((el) => { return el !== null })
 
-    if(my_headers[0] && my_headers[0].input){
+    if (my_headers[0] && my_headers[0].input) {
         return my_headers[0].input
     }
 
     return field;
 
+}
+
+export function replace_keys(keys: RequiredField, raw_csv: string):string {
+    let st: string | undefined;
+
+
+    if (raw_csv?.match(keys.field as string)) {
+        st = raw_csv;
+    } else {
+        st = raw_csv?.replace(keys.value as string, keys.field as string);
+    }
+
+    if (st) {
+        return st;
+    }
+
+    return raw_csv;
 }
 
 export function read_file_content(file: File): Promise<string> {

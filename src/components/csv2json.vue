@@ -45,7 +45,8 @@ import {
   load_data_from_file,
   read_file_content,
   parse_raw_data,
-  guess_value
+  guess_value,
+  replace_keys
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
@@ -112,11 +113,10 @@ export default Vue.extend({
     async change_keys() {
    
       this.json_preview = !this.json_preview;
-      this.required_field?.forEach((el: any) => {
+      this.required_field?.forEach((el: RequiredField) => {
         if (el.value !== "" && el.value !== null && el.field) {
-          const st = this.raw_csv?.replace(el.value, el.field);
-          if (st) {
-            this.raw_csv = st;
+          if(this.raw_csv){
+            this.raw_csv = replace_keys(el,this.raw_csv)
           }
         }
       });
