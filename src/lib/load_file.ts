@@ -78,6 +78,7 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
         meta:data.meta,
         raw_data:raw_data,
         data,
+        data:data.data,
         
     };
 }
