@@ -10,12 +10,22 @@ export interface RequiredField{
   field:null|string,
   value:null|string,
 }
+
+export interface ParseMeta {
+  delimeter:string
+  linebreak:string,
+  aborted:boolean,
+  truncated:boolean,
+  cursor:number,
+  fields:string[]
+}
 export interface Result {
     valid_csv: boolean;
     load_error_messages: null | string[],
     data:null|JSON[],
-    meta:null,
+    meta:null|ParseMeta,
     raw_data:null|string
+ 
 }
 
 //Algo stuff

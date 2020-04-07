@@ -21,8 +21,8 @@
         <tr v-for="(field, i) in required_field" :key="i">
           <td ref="data">{{field.field}}</td>
           <td>
-            <select v-model="field.value">
-              <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
+            <select v-if="get_file_headers" v-model="field.value" ref="field_value" @change="select_header(i)">
+              <option v-for="(header, i) in get_file_headers" :key="i" :value="header" >{{header}}</option>
             </select>
           </td>
         </tr>
@@ -44,7 +44,8 @@ import download from "downloadjs";
 import {
   load_data_from_file,
   read_file_content,
-  parse_raw_data
+  parse_raw_data,
+  guess_value
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
@@ -60,6 +61,7 @@ export default Vue.extend({
       response: null as null | Result,
       json_preview: false,
       algos: algos,
+      get_file_headers:null as null |string[],
       selected_algo: "",
       algo_fields: null as null | undefined | AlgoField[],
       required_field: null as null | RequiredField[],
@@ -67,12 +69,16 @@ export default Vue.extend({
     };
   },
   computed: {
-    get_file_headers() {
-      return this.$data.response.meta.fields;
-    }
+    // get_file_headers() {
+
+    //   return this.response.meta.fields;
+    // }
   },
 
   methods: {
+    select_header(i:number){
+      console.log(this.$refs.field_value)
+    },
     async select_file(event: Event) {
       
       const files = (event.target as HTMLInputElement).files;
@@ -81,8 +87,13 @@ export default Vue.extend({
         this.file_name = files[0].name;
         this.file_selected = !this.file_selected;
         this.response = await load_data_from_file(files[0]);
+
         this.raw_csv = await read_file_content(files[0]);
+        if(this.response.meta?.fields){
+          this.get_file_headers =  this.response.meta?.fields;
+        }
       }
+      
     },
     select_algo() {
       for (let i = 0; i <= this.algos.length - 1; i++) {
@@ -92,10 +103,14 @@ export default Vue.extend({
       }
       this.required_field = [];
       this.algo_fields?.forEach((element: AlgoField) => {
-        this.required_field?.push({ field: element.field_name, value: "" });
+        if(this.get_file_headers){
+
+          this.required_field?.push({ field: element.field_name, value: guess_value(element.field_name,this.get_file_headers) });
+        }
       });
     },
     async change_keys() {
+   
       this.json_preview = !this.json_preview;
       this.required_field?.forEach((el: any) => {
         if (el.value !== "" && el.value !== null && el.field) {
@@ -105,7 +120,7 @@ export default Vue.extend({
           }
         }
       });
-
+     
       if (this.file_name) {
         this.response = await parse_raw_data(this.file_name, this.raw_csv);
         this.$emit(
@@ -114,6 +129,8 @@ export default Vue.extend({
           this.file_name
         );
       }
+
+       console.log(this.required_field)
     }
   }
 });

@@ -1,6 +1,26 @@
 import { Result } from '../lib/types';
 import Papa, { ParseConfig } from 'papaparse'
 
+export function guess_value(field: string, headers: string[]): string {
+
+    if (headers.includes(field)) {
+        return headers.find(el => el === field) || '';
+    }
+
+    headers.map((el) => {
+        return el.match(field.substr(0, 3))
+    })
+    const my_headers = headers.map((el) => {
+        return el.match(field.substring(0,3))
+    }).filter((el) => { return el !== null })
+
+    if(my_headers[0] && my_headers[0].input){
+        return my_headers[0].input
+    }
+
+    return field;
+
+}
 
 export function read_file_content(file: File): Promise<string> {
 
@@ -29,9 +49,9 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
     let errors: [];
     const ext = filename.split('.').slice(-1)[0] || '';
     const config: ParseConfig = {
-         header: true,
+        header: true,
         dynamicTyping: true,
-        skipEmptyLines:true
+        skipEmptyLines: true
     }
 
 
@@ -41,8 +61,8 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
             valid_csv: false,
             load_error_messages: [msg],
             data: null,
-            meta:null,
-            raw_data:raw_data,
+            meta: null,
+            raw_data: raw_data,
         };
     }
 
@@ -55,46 +75,46 @@ export function parse_raw_data(filename: string, raw_data: any): Result {
             valid_csv: false,
             load_error_messages: [msg],
             data: null,
-            meta:data.meta,
-            raw_data:raw_data
+            meta: data.meta,
+            raw_data: raw_data
         };
     }
 
-    
+
 
     if (errors.length > 0) {
         return {
             valid_csv: true,
             load_error_messages: [...errors],
             data: data.data,
-            meta:data.meta,
-            raw_data:raw_data
+            meta: data.meta,
+            raw_data: raw_data
         };
     }
-    
+
     return {
         valid_csv: true,
         load_error_messages: null,
-        meta:data.meta,
-        raw_data:raw_data,
-        data:data.data,
-        
+        meta: data.meta,
+        raw_data: raw_data,
+        data: data.data,
+
     };
 }
 
 
 async function load_data_from_file(file: File): Promise<Result> {
-   
+
     try {
         const file_content = await read_file_content(file);
-        return parse_raw_data(file.name,file_content)
+        return parse_raw_data(file.name, file_content)
     } catch (e) {
         return {
             valid_csv: false,
             load_error_messages: [e.message],
-            raw_data:null,
+            raw_data: null,
             data: null,
-            meta:null
+            meta: null
         };
     }
 }
