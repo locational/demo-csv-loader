@@ -1,7 +1,7 @@
 import { Result, RequiredField } from '../lib/types';
 import Papa, { ParseConfig } from 'papaparse'
 
-export function guess_value(field: string, headers: string[]): string {
+export function get_key(field: string, headers: string[]): string {
 
     if (headers.includes(field)) {
         return headers.find(el => el === field) || '';
