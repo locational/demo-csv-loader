@@ -25,7 +25,6 @@
               v-if="get_file_headers"
               v-model="field.value"
               ref="field_value"
-              @change="select_header(i)"
             >
               <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
             </select>
@@ -75,9 +74,6 @@ export default Vue.extend({
     };
   },
   methods: {
-    select_header(i: number) {
-      console.log(this.$refs.field_value);
-    },
     async select_file(event: Event) {
       const files = (event.target as HTMLInputElement).files;
 
@@ -126,8 +122,6 @@ export default Vue.extend({
           this.file_name
         );
       }
-
-      console.log(this.required_field);
     }
   }
 });
