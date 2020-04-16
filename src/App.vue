@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-   <wrapper />
+    <wrapper />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Wrapper from "./components/Wrapper.vue"
+import Wrapper from "./components/Wrapper.vue";
 
 export default Vue.extend({
   name: "App",

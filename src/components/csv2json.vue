@@ -2,16 +2,25 @@
   <div class="wrapper">
     <div class="load-file">
       <h3>CSV to json coneveter</h3>
-      <input type="file" name="file" placeholder="Upload file" @input="select_file" />
+      <input
+        type="file"
+        name="file"
+        placeholder="Upload file"
+        @input="select_file"
+      />
       <div class="errors" v-if="load_error_messages">
-        <span v-for="(i, err) in load_error_messages" :key="i">h,{{err}}</span>
+        <span v-for="(i, err) in load_error_messages" :key="i"
+          >h,{{ err }}</span
+        >
       </div>
     </div>
     <div class="data-field-mapper" v-if="file_selected">
       <h3>Data field mapper</h3>
       <h4>Select algorithm</h4>
       <select v-model="selected_algo" @change="select_algo">
-        <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">{{algo.fn_name}}</option>
+        <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">{{
+          algo.fn_name
+        }}</option>
       </select>
       <table v-if="required_field" style="margin-left:30%; margin-top:10px;">
         <tr>
@@ -19,24 +28,30 @@
           <th>Fields present in uploaded file</th>
         </tr>
         <tr v-for="(field, i) in required_field" :key="i">
-          <td ref="data">{{field.field}}</td>
+          <td ref="data">{{ field.field }}</td>
           <td>
             <select
               v-if="get_file_headers"
               v-model="field.value"
               ref="field_value"
             >
-              <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{header}}</option>
+              <option
+                v-for="(header, i) in get_file_headers"
+                :key="i"
+                :value="header"
+                >{{ header }}</option
+              >
             </select>
           </td>
         </tr>
       </table>
+
       <button v-if="selected_algo" @click="change_keys">submit</button>
     </div>
     <div class="json-preview" v-if="json_preview && response">
       <h3>Data as json</h3>
-      <pre v-if="response.data">
-          {{response.data}}
+      <pre v-if="geojson">
+          {{ geojson }}
       </pre>
     </div>
   </div>
@@ -54,7 +69,7 @@ import {
 } from "../lib/load_file";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
-import Papa from "papaparse";
+import { convert2geojson, get_numeric_fields } from "../lib/convert_geojson";
 
 export default Vue.extend({
   name: "csv2json",
@@ -70,7 +85,8 @@ export default Vue.extend({
       selected_algo: "",
       algo_fields: null as null | undefined | AlgoField[],
       required_field: null as null | RequiredField[],
-      file_name: null as null | string
+      file_name: null as null | string,
+      geojson: null as null | JSON
     };
   },
   methods: {
@@ -116,9 +132,17 @@ export default Vue.extend({
 
       if (this.file_name) {
         this.response = await parse_raw_data(this.file_name, this.raw_csv);
+
+        if (this.raw_csv && this.response.data) {
+          this.geojson = await convert2geojson(
+            this.raw_csv,
+            get_numeric_fields(this.response.data[0])
+          );
+        }
+
         this.$emit(
           "set_incoming_geodata_and_filename",
-          this.response.data,
+          this.geojson,
           this.file_name
         );
       }
