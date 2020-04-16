@@ -22,7 +22,6 @@ export default Vue.extend({
   methods: {
     set_incoming_geodata_and_filename(data: string, filename: string) {
       this.incoming_data = Object.freeze(data);
-      console.log(this.incoming_data);
     }
   }
 });
