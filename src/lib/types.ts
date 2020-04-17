@@ -27,6 +27,7 @@ export interface Result {
   raw_data: null | string;
 }
 
+
 //Algo stuff
 export interface Algo {
   fn_name: string;
@@ -38,7 +39,7 @@ export interface Algo {
   params?: null | AlgoRunParam[];
   return_fields: AlgoField[];
   remote: boolean;
-  visualisations: VisualisationDefinition[];
+  visualisations?: VisualisationDefinition[];
 }
 
 export interface AlgoRunParam {
