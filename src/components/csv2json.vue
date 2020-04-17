@@ -2,25 +2,20 @@
   <div class="wrapper">
     <div class="load-file">
       <h3>CSV to json coneveter</h3>
-      <input
-        type="file"
-        name="file"
-        placeholder="Upload file"
-        @input="select_file"
-      />
+      <input type="file" name="file" placeholder="Upload file" @input="select_file" />
       <div class="errors" v-if="load_error_messages">
-        <span v-for="(i, err) in load_error_messages" :key="i"
-          >h,{{ err }}</span
-        >
+        <span v-for="(i, err) in load_error_messages" :key="i">h,{{ err }}</span>
       </div>
     </div>
     <div class="data-field-mapper" v-if="file_selected">
       <h3>Data field mapper</h3>
       <h4>Select algorithm</h4>
       <select v-model="selected_algo" @change="select_algo">
-        <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">{{
+        <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">
+          {{
           algo.fn_name
-        }}</option>
+          }}
+        </option>
       </select>
       <table v-if="required_field" style="margin-left:30%; margin-top:10px;">
         <tr>
@@ -30,17 +25,8 @@
         <tr v-for="(field, i) in required_field" :key="i">
           <td ref="data">{{ field.field }}</td>
           <td>
-            <select
-              v-if="get_file_headers"
-              v-model="field.value"
-              ref="field_value"
-            >
-              <option
-                v-for="(header, i) in get_file_headers"
-                :key="i"
-                :value="header"
-                >{{ header }}</option
-              >
+            <select v-if="get_file_headers" v-model="field.value" ref="field_value">
+              <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{ header }}</option>
             </select>
           </td>
         </tr>
@@ -64,9 +50,10 @@ import {
   load_data_from_file,
   read_file_content,
   parse_raw_data,
-  replace_keys,
-  get_key
 } from "../lib/load_file";
+
+import {replace_keys} from 'lib/replace_keys'
+import { get_keys } from "lib/get_keys";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
 import { convert2geojson, get_numeric_fields } from "../lib/convert_geojson";
@@ -115,7 +102,7 @@ export default Vue.extend({
         if (this.get_file_headers) {
           this.required_field?.push({
             field: element.field_name,
-            value: get_key(element.field_name, this.get_file_headers)
+            value: get_keys(element.field_name, this.get_file_headers)
           });
         }
       });
