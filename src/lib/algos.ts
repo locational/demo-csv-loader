@@ -1,5 +1,5 @@
 import { Algo } from "../lib/types";
-import { visualisations } from "../lib/visualisations";
+
 
 export const algos: Algo[] = [
   {
@@ -31,8 +31,7 @@ export const algos: Algo[] = [
       }
     ],
     return_fields: [{ field_name: "adaptively_selected", type: "boolean" }],
-    remote: true,
-    visualisations: [visualisations.sampling]
+    remote: true
   },
   {
     fn_name: "fn-prevalence-predictor",
@@ -65,7 +64,6 @@ export const algos: Algo[] = [
       { field_name: "exceedance_probability", type: "number" },
       { field_name: "exceedance_uncertainty", type: "number" }
     ],
-    remote: true,
-    visualisations: [visualisations.coverage, visualisations.confidence]
+    remote: true
   }
 ];
