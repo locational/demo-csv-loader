@@ -2,9 +2,16 @@
   <div class="wrapper">
     <div class="load-file">
       <h3>CSV to json coneveter</h3>
-      <input type="file" name="file" placeholder="Upload file" @input="select_file" />
+      <input
+        type="file"
+        name="file"
+        placeholder="Upload file"
+        @input="select_file"
+      />
       <div class="errors" v-if="load_error_messages">
-        <span v-for="(i, err) in load_error_messages" :key="i">h,{{ err }}</span>
+        <span v-for="(i, err) in load_error_messages" :key="i"
+          >h,{{ err }}</span
+        >
       </div>
     </div>
     <div class="data-field-mapper" v-if="file_selected">
@@ -12,25 +19,37 @@
       <h4>Select algorithm</h4>
       <select v-model="selected_algo" @change="select_algo">
         <option v-for="(algo, i) in algos" :key="i" :value="algo.fn_name">
-          {{
-          algo.fn_name
-          }}
+          {{ algo.fn_name }}
         </option>
       </select>
-      <table v-if="required_field" style="margin-left:30%; margin-top:10px;">
-        <tr>
-          <th>Required fields</th>
-          <th>Fields present in uploaded file</th>
-        </tr>
-        <tr v-for="(field, i) in required_field" :key="i">
-          <td ref="data">{{ field.field }}</td>
-          <td>
-            <select v-if="get_file_headers" v-model="field.value" ref="field_value">
-              <option v-for="(header, i) in get_file_headers" :key="i" :value="header">{{ header }}</option>
-            </select>
-          </td>
-        </tr>
-      </table>
+      <div v-if="required_field">
+        <table
+          v-if="required_field.length > 0"
+          style="margin-left:30%; margin-top:10px;"
+        >
+          <tr>
+            <th>Required fields</th>
+            <th>Fields present in uploaded file</th>
+          </tr>
+          <tr v-for="(field, i) in required_field" :key="i">
+            <td ref="data">{{ field.field }}</td>
+            <td>
+              <select
+                v-if="get_file_headers"
+                v-model="field.value"
+                ref="field_value"
+              >
+                <option
+                  v-for="(header, i) in get_file_headers"
+                  :key="i"
+                  :value="header"
+                  >{{ header }}</option
+                >
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
 
       <button v-if="selected_algo" @click="change_keys">submit</button>
     </div>

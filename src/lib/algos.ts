@@ -1,6 +1,5 @@
 import { Algo } from "../lib/types";
 
-
 export const algos: Algo[] = [
   {
     fn_name: "fn-adaptive-sampling",
@@ -65,5 +64,12 @@ export const algos: Algo[] = [
       { field_name: "exceedance_uncertainty", type: "number" }
     ],
     remote: true
+  },
+  {
+    fn_name: "none",
+    title: "",
+    return_fields: [],
+    intent: "",
+    remote: false
   }
 ];

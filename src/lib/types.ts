@@ -27,7 +27,6 @@ export interface Result {
   raw_data: null | string;
 }
 
-
 //Algo stuff
 export interface Algo {
   fn_name: string;
