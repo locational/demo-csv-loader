@@ -49,11 +49,11 @@ import download from "downloadjs";
 import {
   load_data_from_file,
   read_file_content,
-  parse_raw_data,
+  parse_raw_data
 } from "../lib/load_file";
 
-import {replace_keys} from 'lib/replace_keys'
-import { get_keys } from "lib/get_keys";
+import { replace_keys } from "../lib/replace_keys";
+import { get_keys } from "../lib/get_keys";
 import { algos } from "../lib/algos";
 import { Algo, AlgoField, Result, RequiredField } from "../lib/types";
 import { convert2geojson, get_numeric_fields } from "../lib/convert_geojson";

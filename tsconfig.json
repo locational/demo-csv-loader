@@ -11,6 +11,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
+      "jest",
       "webpack-env"
     ],
     "typeRoots":["src/types","node_modules/@types"],

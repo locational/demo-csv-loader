@@ -14,6 +14,8 @@ export function get_keys(field: string, headers: string[]): string {
       return el !== null;
     });
 
+  console.log(my_headers)
+
   if (my_headers[0] && my_headers[0].input) {
     return my_headers[0].input;
   }
